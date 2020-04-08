@@ -17,11 +17,69 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 ]
 }`;
+const addpost = `{
+    "name":"addpost",
+    "fields":[
+    {
+        "label":"Title",
+        "input": {
+            "type":"text",
+            "required": true
+        }
+    },
+    {
+        "label":"Description",
+        "input": {
+            "type":"textarea",
+            "required":true
+        }
+    },
+    {
+        "label":"Image",
+        "input": {
+            "type":"file",
+            "required": true
+        }
+    },
+    {
+        "label":"Publish Date",
+        "input": {
+            "type": "date",
+            "required": true
+        }
+    },
+    {
+        "label": "Author",
+        "input": {
+            "type": "text"
+        }
+    }
+],
+"references":[
+    {
+      "input":{
+        "type":"checkbox",
+        "required":true,
+        "checked":"false"
+      }
+    },
+    {
+        "text without ref":"View Author Post",
+        "text":"View Author Post",
+        "ref":"viewauthor"
+    }
+  ],
+    "buttons":[
+    {
+        "text":"Create Post"
+    }
+]
+}`
 
     const signin = '{"name":"login","fields":[{"label":"Enter your login or email","input":{"type":"text","required":true,"placeholder": "login or email"}},{"label":"Enter your password","input":{"type":"password","required":true,"placeholder": "password"}}],"references":[{"text":"Forgot password?","ref":"rememberpassword"},{"text":"Create new account","ref":"signup"}],"buttons":[{"text":"Login"}]}';
     const signup = '{"name":"register","fields":[{"input":{"type":"text","required":true,"placeholder":"Enter full name"}},{"input":{"type":"email","required":true,"placeholder":"Enter email"}},{"input":{"type":"password","required":true,"placeholder":"password"}},{"input":{"type":"password","required":true,"placeholder":"Confirm password"}}],"references":[{"text without ref":"Already have account?","text":"Login","ref":"signin"}],"buttons":[{"text":"Sign Up"}]}';
 
-    var object = JSON.parse(colorscheme);
+    var object = JSON.parse(addpost);
     var name;
 
     switch (object.name) {
@@ -34,6 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
         case "login":
             name = object.name.split('_').join(' ').toUpperCase();
             break;
+        case "addpost": 
+        name = "ADD POST"
+            break;
+
     }
 
 
@@ -114,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             document.getElementById("container__items"+i).append(input);
         }
+         // Проверка на email
         if (inputType == 'email'){
 			var input = document.createElement('input');
 			input.setAttribute('type','email');
@@ -125,19 +188,42 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             document.getElementById("container__items"+i).append(input);
-		}
-
+        }
+        // Проверка на textarea
+        if (inputType == 'textarea'){
+			var textarea = document.createElement('textarea');
+            textarea.setAttribute('required', true);
+            textarea.className = "container__textarea";
+            document.getElementById("container__items"+i).append(textarea);
+        }
+        // Проверка на file
+        if (inputType == 'file') {
+            var file = document.createElement('input');
+            file.setAttribute('type', 'file');
+            document.getElementById("container__items"+i).append(file);
+        }
+        // Проверка на date
+        if (inputType == 'date') {
+            var date = document.createElement('input');
+            date.setAttribute('type', 'date');
+            date.setAttribute('required', true);
+            document.getElementById("container__items"+i).append(date);
+        }
+    
+    
     }
 
     // Блок для references
 
     if (typeof object.references != "undefined") {
         let references = object.references;
+        
 
         let div = document.createElement('div');
 		div.className = "container__ref";
 		document.querySelector('.container').appendChild(div);
         for (let [l, v] of references.entries()) {
+            let referencesInput = object.references[l].input;
             let textWithoutReferences = object.references[l]["text without ref"];
             if (typeof textWithoutReferences !== "undefined") {
                 let text = document.createElement('p');
@@ -147,15 +233,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 link.setAttribute('href', object.references[l].ref);
                 link.innerHTML = object.references[l].text;
                 document.querySelector('.container__ref').append(link);
+                console.log(link);
             } else {
                 let link = document.createElement('a');
                 link.setAttribute('href', object.references[l].ref);
                 link.innerHTML = object.references[l].text;
                 document.querySelector('.container__ref').append(link);
             }
+            // Проверка на наличие input
+            if ( typeof referencesInput !== "undefined") {
+                let input = document.createElement('input');
+                input.setAttribute('type', 'checkbox');
+                input.setAttribute('required', true);
+                if (object.references[l].input.checked == 'false') {
+                    input.setAttribute('checked', false);
+                }
+                document.querySelector('.container__ref').append(input);
+                
+            }
         }
     }
 
+    // BUTTONS
     if (typeof object.buttons != "undefined") {
         let div = document.createElement('div');
 		div.className = "container__button";
