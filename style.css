@@ -5,10 +5,12 @@
     border: 0;
     text-decoration: none;
 }
+
 body {
     font-family: 'Source Code Pro', monospace;
-    
+    background-color: rgb(242, 247, 241);
 }
+
 
 .container {
     max-width: 450px;
@@ -22,6 +24,7 @@ body {
     box-shadow: 10px 10px 20px 0.5px rgba(0, 0, 0, 0.4);
     padding: 20px;
     background-color: rgb(247, 244, 244);
+
 }
 .container__items {
     padding: 10px;
@@ -80,4 +83,8 @@ button {
     height: 50px;
     border: 1px solid gray;
     border-radius: 10px;
+}
+.container__button {
+    display: flex;
+    justify-content: space-around;
 }

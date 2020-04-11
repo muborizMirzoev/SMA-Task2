@@ -74,12 +74,133 @@ const addpost = `{
         "text":"Create Post"
     }
 ]
-}`
+}`;
+const interview = `{
+    "name":"interview",
+    "fields":[
+        {
+            "label":"Введите своё ФИО",
+            "input":{
+                "type":"text",
+                "required":true,
+                "placeholder":"Иванов Иван Иванович"
+            }
+        },
+        {
+          "label":"Введите Номер телефона",
+          "input":{
+              "type":"number",
+              "required":true,
+              "mask": "+7 (999) 99-99-999"
+          }
+        },
+        {
+          "label":"Введите свою Почту",
+          "input":{
+              "type":"email",
+              "required":true,
+              "placeholder":"example@mail.com"
+          }
+        },
+        {
+            "label":"Введите свой возраст",
+            "input":{
+                "type":"number",
+                "required":true
+            }
+        },
+        {
+            "label":"Введите вашу специальность",
+            "input":{
+                "type":"text",
+                "required":true
+            }
+        },
+        {
+            "label":"Выберете технологии, с которыми вы работали",
+            "input":{
+                "type":"technology",
+                "required": true,
+                "technologies": ["PHP", "JS", "Laravel", "Express.js", "Yii2", "HTML", "CSS", "Java"],
+                "multiple": true
+            }
+        },
+        {
+            "label":"Ваш срок работы",
+            "input":{
+                "type":"number",
+                "required": true
+            }
+        },
+        {
+            "label":"Ваша фотография",
+            "input":{
+                "type":"file",
+                "required":true
+            }
+        },
+        {
+            "label":"Серия, номер",
+            "input":{
+                "type": "number",
+                "required": true,
+                "mask": "99-99 999999"
+            }
+        },
+        {
+            "label":"Код подразделения",
+            "input":{
+                "type": "number",
+                "required": true,
+                "mask": "999-999"
+            }
+        },
+        {
+            "label":"Скан / Фото паспорта (1 страница)",
+            "input":{
+                "type": "file",
+                "required": true,
+                "multiple": true,
+                "filetype": ["png", "jpeg", "pdf"]
+            }
+        },
+        {
+            "label":"Расскажите немного о себе",
+            "input":{
+                "type":"textarea",
+                "required:":true
+            }
+        }
+    ],
+    "references":[
+        {
+          "input":{
+            "type":"checkbox",
+            "required":true,
+            "checked":"false"
+          }
+        },
+        {
+            "text without ref":"I accept the",
+            "text":"Terms & Conditions",
+            "ref":"termsandconditions"
+        }
+    ],
+    "buttons":[
+        {
+            "text":"Send"
+        },
+        {
+            "text":"Cancel"
+        }
+    ]
+}`;
 
     const signin = '{"name":"login","fields":[{"label":"Enter your login or email","input":{"type":"text","required":true,"placeholder": "login or email"}},{"label":"Enter your password","input":{"type":"password","required":true,"placeholder": "password"}}],"references":[{"text":"Forgot password?","ref":"rememberpassword"},{"text":"Create new account","ref":"signup"}],"buttons":[{"text":"Login"}]}';
     const signup = '{"name":"register","fields":[{"input":{"type":"text","required":true,"placeholder":"Enter full name"}},{"input":{"type":"email","required":true,"placeholder":"Enter email"}},{"input":{"type":"password","required":true,"placeholder":"password"}},{"input":{"type":"password","required":true,"placeholder":"Confirm password"}}],"references":[{"text without ref":"Already have account?","text":"Login","ref":"signin"}],"buttons":[{"text":"Sign Up"}]}';
 
     var object = JSON.parse(addpost);
+    console.log(object);
     var name;
 
     switch (object.name) {
@@ -93,7 +214,10 @@ const addpost = `{
             name = object.name.split('_').join(' ').toUpperCase();
             break;
         case "addpost": 
-        name = "ADD POST"
+            name = "ADD POST";
+            break;
+        case "interview":
+            name = "INTERVIEW";
             break;
 
     }
@@ -209,8 +333,41 @@ const addpost = `{
             date.setAttribute('required', true);
             document.getElementById("container__items"+i).append(date);
         }
-    
-    
+        // Проверка на number
+        if (inputType == 'number') {
+            var number = document.createElement('input');
+            number.setAttribute('type', 'text');
+            number.setAttribute('required', true);
+            number.setAttribute('id', 'phone');
+            document.getElementById("container__items"+i).append(number);
+            console.log(object.fields[i].input.mask);
+            $(function(){
+                //2. Получить элемент, к которому необходимо добавить маску
+                $("#phone").mask(object.fields[1].input.mask);
+                
+            });
+        }
+
+        // Проверка на technology
+        if(inputType == "technology") {
+            var select = document.createElement('select');
+            let technology = object.fields[i].input.technologies;
+            console.log(object.fields[i].input.technologies);
+            document.getElementById("container__items"+i).append(select);
+            for (let t = 0; t < technology.length; t++) {
+                console.log(technology[t]);
+                var option = document.createElement('option');
+                option.innerHTML = technology[t];
+                document.querySelector('select').appendChild(option);
+                
+            }
+
+            
+        
+           
+            document.querySelector('select').append(option);
+        }
+
     }
 
     // Блок для references
@@ -229,6 +386,7 @@ const addpost = `{
                 let text = document.createElement('p');
                 text.innerHTML = textWithoutReferences;
                 document.querySelector('.container__ref').append(text);
+
                 let link = document.createElement('a');
                 link.setAttribute('href', object.references[l].ref);
                 link.innerHTML = object.references[l].text;
@@ -271,11 +429,10 @@ const addpost = `{
 
 
 
-
-
-
-
-
+    $(function () {
+        //1. Получить элемент, к которому необходимо добавить маску
+        $("#phone").mask(object.fields[i].input.mask);
+    }); 
 
 
 
